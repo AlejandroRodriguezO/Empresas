@@ -10,27 +10,27 @@ switch ($accion) {
     case "Agregar":
         $empresa = new Empresa($txtNit, $txtNombres, $txtTelC, $cbDepartamento, $cbMunicipio, $txtCorreo, $txtDescripcion, $txtCIIU, $txtProSer, $txtEmpleados);
         $resultado = $dEmpresa->agregar($empresa);
-        if($resultado->estado){
-            
-            $fotos=$_FILES['fileFoto']['name'];
-            $datosArchivo = explode(".",$fotos);
+        if ($resultado->estado) {
+
+            $fotos = $_FILES['fileFoto']['name'];
+            $datosArchivo = explode(".", $fotos);
             $longitud = count($datosArchivo);
-            $extension = strtolower($datosArchivo[$longitud-1]);
-            $nombreArchivoCopiar=$empresa->getNit().".".$extension;
-            $ruta="../Vista/Fotos/";
-            $error=null;
-            try{
-                if($extension=="jpg"){
+            $extension = strtolower($datosArchivo[$longitud - 1]);
+            $nombreArchivoCopiar = $empresa->getNit() . "." . $extension;
+            $ruta = "../Vista/Fotos/";
+            $error = null;
+            try {
+                if ($extension == "jpg") {
                     move_uploaded_file(
                         $_FILES['fileFoto']['tmp_name'],
-                        $ruta.$nombreArchivoCopiar
+                        $ruta . $nombreArchivoCopiar
                     );
-                }else{
-                    $mensaje="La foto no cumple con la extension";
-                    $resultado->mensaje += " ".$mensaje;
+                } else {
+                    $mensaje = "La foto no cumple con la extension";
+                    $resultado->mensaje += " " . $mensaje;
                 }
-            }catch(Exception $ex){
-                echo $error=$ex->getMessage();
+            } catch (Exception $ex) {
+                echo $error = $ex->getMessage();
             }
         }
         echo json_encode($resultado);
@@ -47,7 +47,7 @@ switch ($accion) {
         break;
 
     case "Actualizar":
-        $empresa = new Empresa($txtNit, $txtNombres, $txtTelC, $cbDepartamento, $cbMunicipio, $txtCorreo, $cbSectorE, $txtDescripcion, $txtCIIU, $txtProSer, $txtEmpleados);
+        $empresa = new Empresa($txtNit, $txtNombres, $txtTelC, $cbDepartamento, $cbMunicipio, $txtCorreo, $txtDescripcion, $txtCIIU, $txtProSer, $txtEmpleados);
         $empresa->setIdEmpresa($idEmpresa);
         $resultado = $dEmpresa->actualizar($empresa);
         echo json_encode($resultado);
@@ -55,6 +55,17 @@ switch ($accion) {
 
     case "Eliminar":
         $resultado = $dEmpresa->eliminar($idEmpresa);
+        echo json_encode($resultado);
+        break;
+
+    case "ListarDepartamentos";
+        $resultado = $dEmpresa->listarDepartamentos();
+        
+        echo json_encode($resultado);
+        break;
+
+    case "ListarMunicipiosPorDepartamento":
+        $resultado = $dEmpresa->listarMunicipiosPorDepartamento($cbDepartamento);
         echo json_encode($resultado);
         break;
 }

@@ -134,4 +134,48 @@ class DatosEmpresa
         }
         return $this->retorno;
     }
+
+    public function listarDepartamentos(){
+        try{
+            $consulta="select * from departamentos";
+            $resultado = $this->miConexion->query($consulta);
+            if($resultado->rowCount()>0){
+                $this->retorno->estado=true;
+                $this->retorno->datos=$resultado->fetchAll();
+                $this->retorno->mensaje="Listado de Departamentos";
+            }else{
+                $this->retorno->estado=false;
+                $this->retorno->datos=null;
+                $this->retorno->mensaje="No hay Departamentos";
+            }
+        }catch(PDOException $ex){
+            $this->retorno->estado=false;
+            $this->retorno->datos=null;
+            $this->retorno->mensaje=$ex->getMessage();
+        }
+        return $this->retorno;
+    }
+
+    public function listarMunicipiosPorDepartamento($idDepartamento){
+        try{
+            $consulta="select * from municipios where munDepartamento=?";
+            $resultado = $this->miConexion->prepare($consulta);
+            $resultado->bindParam(1,$idDepartamento);
+            $resultado->execute();
+            if($resultado->rowCount()>0){
+                $this->retorno->estado=true;
+                $this->retorno->datos=$resultado->fetchAll();
+                $this->retorno->mensaje="Listado de Municpios del Departamento";
+            }else{
+                $this->retorno->estado=false;
+                $this->retorno->datos=null;
+                $this->retorno->mensaje="No hay Municipios";
+            }
+        }catch(PDOException $ex){
+            $this->retorno->estado=false;
+            $this->retorno->datos=null;
+            $this->retorno->mensaje=$ex->getMessage();
+        }
+        return $this->retorno;
+    }
 }

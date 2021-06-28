@@ -4,10 +4,16 @@ $(function() {
 
     primeraFila = $("#fila");
     listar();
+    ListarDepartamentos();
+    $("#cbDepartamento").change(function() {
+        $("#cbMunicipio").empty();
+        listarMunicipiosPorDepartamento();
+    });
 
     $("#btnAgregar").click(function() {
         if ($("#txtNit").val() != "" && $("#txtNombres").val() != "" &&
-            $("#txtTelC").val() != "" && $("#txtCorreo").val() != "" &&
+            $("#txtTelC").val() != "" && $("#cbDepartamento").val() != "" &&
+            $("#cbMunicipio").val() != "" && $("#txtCorreo").val() != "" &&
             $("#txtDescripcion").val() != "" && $("#txtCIIU").val() != "" &&
             $("#txtProSer").val() != "" && $("#txtEmpleados").val() != "" &&
             $("#fileFoto").val() != "") {
@@ -96,7 +102,7 @@ function consultar() {
                 $("#txtNit").val(resultado.datos.nit);
                 $("#txtNombres").val(resultado.datos.nombre);
                 $("#txtTelC").val(resultado.datos.celular);
-                $("#bDepartamento").val(resultado.datos.departamento);
+                $("#cbDepartamento").val(resultado.datos.departamento);
                 $("#cbMunicipio").val(resultado.datos.municipio);
                 $("#txtCorreo").val(resultado.datos.correo);
                 // $("#cbSectorE").val(resultado.datos.economico);
@@ -207,6 +213,67 @@ function listar() {
         }
     });
 
+}
+
+function ListarDepartamentos() {
+    var datos = {
+        "accion": "ListarDepartamentos"
+    };
+    $.ajax({
+        url: "../Controlador/EmpresaController.php",
+        data: datos,
+        type: "post",
+        dataType: "json",
+        cache: false,
+        success: function(resultado) {
+            console.log(resultado);
+            if (resultado.estado) {
+                $.each(resultado.datos, function(i, depa) {
+                    $('#cbDepartamento').append(
+                        $('<option>', {
+                            value: depa.idDepartamento,
+                            text: depa.depNombre
+                        })
+                    )
+                })
+            }
+        },
+        error: function(resultado) {
+            console.log(resultado);
+        }
+    });
+}
+
+function listarMunicipiosPorDepartamento() {
+    var datos = {
+        accion: "ListarMunicipiosPorDepartamento",
+        cbDepartamento: $("#cbDepartamento").val()
+    };
+
+    $.ajax({
+        url: "../Controlador/EmpresaController.php",
+        data: datos,
+        type: "post",
+        dataType: "json",
+        cache: false,
+        success: function(resultado) {
+            console.log(resultado);
+            if (resultado.estado) {
+                var municipios = resultado.datos;
+                $.each(municipios, function(i, municipio) {
+                    $('#cbMunicipio').append(
+                        $('<option>', {
+                            value: municipio.idMunicipio,
+                            text: municipio.munNombre
+                        })
+                    );
+                });
+            }
+        },
+        error: function(resultado) {
+            console.log(resultado);
+        }
+    });
 }
 
 /**
